@@ -32,7 +32,7 @@ func Client() *client {
 	}
 }
 
-func (c *client) Search(ctx context.Context, query string) (*SearchResults, error) {
+func (c *client) Search(ctx context.Context, query string, onlyBefore string, onlyAfter string) (*SearchResults, error) {
 	if query == "" {
 		return nil, fmt.Errorf("query should not be empty")
 	}
@@ -42,6 +42,12 @@ func (c *client) Search(ctx context.Context, query string) (*SearchResults, erro
 		return nil, errors.WithStack(err)
 	}
 	searchURL := endpoint + "?q=" + url.QueryEscape(query)
+	if onlyBefore != "" {
+		searchURL += "&only_before=" + url.QueryEscape(onlyBefore)
+	}
+	if onlyAfter != "" {
+		searchURL += "&only_after=" + url.QueryEscape(onlyAfter)
+	}
 
 	return execGet[SearchResults](ctx, searchURL)
 }
